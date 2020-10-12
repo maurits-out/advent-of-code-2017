@@ -38,13 +38,10 @@ find_unbalanced_disc(Name, Programs) ->
   case UnbalancedChildren of
     [] ->
       case not balanced(Name, Programs) of
-        true ->
-          {true, Name};
-        false ->
-          false
+        true -> {true, Name};
+        false -> false
       end;
-    [N] ->
-      {true, N}
+    [N] -> {true, N}
   end.
 
 total_weights_of_child_programs(UnbalancedName, Programs) ->
