@@ -53,5 +53,5 @@ total_weights_of_child_programs(UnbalancedName, Programs) ->
 
 part2() ->
   Programs = parse_input(),
-  {true, UnbalancedNode} = find_unbalanced_disc("airlri", Programs),
-  total_weights_of_child_programs(UnbalancedNode, Programs).
+  {true, UnbalancedDisc} = find_unbalanced_disc("airlri", Programs),
+  total_weights_of_child_programs(UnbalancedDisc, Programs).
