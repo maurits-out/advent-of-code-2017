@@ -8,7 +8,7 @@ read_input() ->
   [parse_line(L) || L <- Lines].
 
 parse_line(Line) ->
-  [Reg1, Instr, Arg1, "if", Reg2, Comp, Arg2] = string:lexemes(Line, [$\ ]),
+  [Reg1, Instr, Arg1, "if", Reg2, Comp, Arg2] = string:lexemes(Line, " "),
   Command = {Reg1, list_to_atom(Instr), list_to_integer(Arg1)},
   Condition = {Reg2, Comp, list_to_integer(Arg2)},
   {Command, Condition}.
