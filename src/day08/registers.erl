@@ -1,5 +1,5 @@
 -module(registers).
--export([part1/0]).
+-export([part1/0, part2/0]).
 
 read_input() ->
   {ok, Bin} = file:read_file("input.txt"),
@@ -8,9 +8,9 @@ read_input() ->
   [parse_line(L) || L <- Lines].
 
 parse_line(Line) ->
-  [Reg1, Instr, Arg1, "if", Reg2, Comp, Argument2] = string:lexemes(Line, [$\ ]),
+  [Reg1, Instr, Arg1, "if", Reg2, Comp, Arg2] = string:lexemes(Line, [$\ ]),
   Command = {Reg1, list_to_atom(Instr), list_to_integer(Arg1)},
-  Condition = {Reg2, Comp, list_to_integer(Argument2)},
+  Condition = {Reg2, Comp, list_to_integer(Arg2)},
   {Command, Condition}.
 
 register_value(Reg, State) ->
@@ -27,24 +27,27 @@ evaluate_condition({Reg, Comp, Value}, State) ->
     "!=" -> RegValue /= Value
   end.
 
-apply_command({Reg, Instr, Value}, State) ->
+apply_command({Reg, Instr, Value}, State, CurrentMax) ->
   RegValue = register_value(Reg, State),
   NewValue = case Instr of
                inc -> RegValue + Value;
                dec -> RegValue - Value
              end,
-  State#{Reg => NewValue}.
+  {State#{Reg => NewValue}, max(CurrentMax, NewValue)}.
 
-apply_instruction({Command, Condition}, State) ->
+apply_instruction({Command, Condition}, {State, CurrentMax}) ->
   case evaluate_condition(Condition, State) of
-    true -> apply_command(Command, State);
-    false -> State
+    true -> apply_command(Command, State, CurrentMax);
+    false -> {State, CurrentMax}
   end.
 
-highest_value(State) ->
-  lists:max(maps:values(State)).
+execute() ->
+  lists:foldl(fun apply_instruction/2, {#{}, 0}, read_input()).
 
 part1() ->
-  Instructions = read_input(),
-  State = lists:foldl(fun apply_instruction/2, #{}, Instructions),
-  highest_value(State).
+  {State, _} = execute(),
+  lists:max(maps:values(State)).
+
+part2() ->
+  {_, Max} = execute(),
+  Max.
