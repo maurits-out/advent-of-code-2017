@@ -27,7 +27,7 @@ evaluate_condition({Reg, Comp, Value}, State) ->
     "!=" -> RegValue /= Value
   end.
 
-apply_command({Reg, Instr, Value}, State, CurrentMax) ->
+apply_command({Reg, Instr, Value}, {State, CurrentMax}) ->
   RegValue = register_value(Reg, State),
   NewValue = case Instr of
                inc -> RegValue + Value;
@@ -37,7 +37,7 @@ apply_command({Reg, Instr, Value}, State, CurrentMax) ->
 
 apply_instruction({Command, Condition}, {State, CurrentMax}) ->
   case evaluate_condition(Condition, State) of
-    true -> apply_command(Command, State, CurrentMax);
+    true -> apply_command(Command, {State, CurrentMax});
     false -> {State, CurrentMax}
   end.
 
