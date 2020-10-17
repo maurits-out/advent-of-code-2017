@@ -1,5 +1,5 @@
 -module(stream).
--export([part1/0, part2/0]).
+-export([process/0]).
 
 process() ->
   {ok, File} = file:read_file("input.txt"),
@@ -14,11 +14,3 @@ process([$> | T], Depth, true, Score, GarbageCount) -> process(T, Depth, false, 
 process([$!, _ | T], Depth, true, Score, GarbageCount) -> process(T, Depth, true, Score, GarbageCount);
 process([_ | T], Depth, false, Score, GarbageCount) -> process(T, Depth, false, Score, GarbageCount);
 process([_ | T], Depth, true, Score, GarbageCount) -> process(T, Depth, true, Score, GarbageCount + 1).
-
-part1() ->
-  {TotalScore, _} = process(),
-  TotalScore.
-
-part2() ->
-  {_, GarbageCount} = process(),
-  GarbageCount.
