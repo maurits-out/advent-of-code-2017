@@ -11,8 +11,7 @@ extract_subsections(Position, Length, List) ->
   end.
 
 reverse_subsections({S1, S2}) ->
-  S = lists:reverse(S1 ++ S2),
-  {lists:sublist(S, length(S1)), lists:sublist(S, length(S1) + 1, length(S2))}.
+  lists:split(length(S1), lists:reverse(S1 ++ S2)).
 
 replace_subsections(Position, {R1, []}, List) ->
   FirstPart = lists:sublist(List, Position - 1) ++ R1,
@@ -26,16 +25,16 @@ reverse_section(Position, Length, List) ->
   {R1, R2} = reverse_subsections({S1, S2}),
   replace_subsections(Position, {R1, R2}, List).
 
-calculate_hash([], [N, M | _], _, _) ->
+hash_round([], [N, M | _], _, _) ->
   N * M;
-calculate_hash([Length | T], List, Position, SkipSize) ->
+hash_round([Length | T], List, Position, SkipSize) ->
   UpdatedList = reverse_section(Position, Length, List),
   UpdatedPosition = (Position + Length + SkipSize - 1) rem length(List) + 1,
-  calculate_hash(T, UpdatedList, UpdatedPosition, SkipSize + 1).
+  hash_round(T, UpdatedList, UpdatedPosition, SkipSize + 1).
 
 part1() ->
   PuzzleInput = [76, 1, 88, 148, 166, 217, 130, 0, 128, 254, 16, 2, 130, 71, 255, 229],
-  calculate_hash(PuzzleInput, lists:seq(0, 255), 1, 0).
+  hash_round(PuzzleInput, lists:seq(0, 255), 1, 0).
 
 %% Tests
 
@@ -56,4 +55,4 @@ replace_subsections_test() ->
   ?assertEqual([4, 5, 3, 1, 2], replace_subsections(4, {[1, 2], [4, 5]}, [1, 2, 3, 4, 5])).
 
 calculate_hash_test() ->
-  ?assertEqual(12, calculate_hash([3, 4, 1, 5], [0, 1, 2, 3, 4], 1, 0)).
+  ?assertEqual(12, hash_round([3, 4, 1, 5], [0, 1, 2, 3, 4], 1, 0)).
