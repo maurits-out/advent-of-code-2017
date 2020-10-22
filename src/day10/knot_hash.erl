@@ -45,13 +45,11 @@ dense_hash([], Result) ->
 dense_hash(List, Result) ->
   {Block, Rest} = lists:split(?XOR_BLOCK_LENGTH, List),
   dense_hash(Rest, [xor_list(Block) | Result]).
-dense_hash(List) ->
-  dense_hash(List, []).
 
 knot(Input) ->
   Lengths = Input ++ ?ADDITIONAL_LENGTHS,
   SparseHash = sparse_hash(Lengths, initial_list(), 0, 0),
-  DenseHash = dense_hash(SparseHash),
+  DenseHash = dense_hash(SparseHash, []),
   lists:flatten([io_lib:format("~2.16.0b", [N]) || N <- DenseHash]).
 
 part1() ->
