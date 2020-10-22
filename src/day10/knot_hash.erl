@@ -64,7 +64,7 @@ part2() ->
 
 %% Tests
 
-calculate_hash_test() ->
+hash_round_test() ->
   ?assertEqual({[0, 3, 4, 2, 1], 13}, hash_round([3, 4, 1, 5], [0, 1, 2, 3, 4], 1, 0)).
 
 xor_list_test() ->
