@@ -4,6 +4,7 @@
 
 -define(ADDITIONAL_LENGTHS, [17, 31, 73, 47, 23]).
 -define(XOR_BLOCK_LENGTH, 16).
+-define(HASH_ROUNDS, 64).
 
 puzzle_input() ->
   "76,1,88,148,166,217,130,0,128,254,16,2,130,71,255,229".
@@ -30,7 +31,7 @@ hash_round([Length | T], List, SkipSize, TotalSteps) ->
   NewList = rotate(reverse_section(List, Length), Steps),
   hash_round(T, NewList, SkipSize + 1, TotalSteps + Steps).
 
-sparse_hash(_, List, 64, TotalSteps) ->
+sparse_hash(_, List, ?HASH_ROUNDS, TotalSteps) ->
   rotate_back(List, TotalSteps);
 sparse_hash(Lengths, List, Round, TotalSteps) ->
   {NewList, Steps} = hash_round(Lengths, List, Round * length(Lengths), 0),
