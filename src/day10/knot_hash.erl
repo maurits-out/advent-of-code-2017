@@ -38,7 +38,7 @@ sparse_hash(Lengths, List, Round, TotalSteps) ->
   sparse_hash(Lengths, NewList, Round + 1, TotalSteps + Steps).
 
 xor_list(List) ->
-  lists:foldl(fun (N, Acc) -> N bxor Acc end, 0, List).
+  lists:foldl(fun(N, Acc) -> N bxor Acc end, 0, List).
 
 dense_hash([], Result) ->
   lists:reverse(Result);
@@ -46,11 +46,13 @@ dense_hash(List, Result) ->
   {Block, Rest} = lists:split(?XOR_BLOCK_LENGTH, List),
   dense_hash(Rest, [xor_list(Block) | Result]).
 
+convert_to_hex(DenseHash) ->
+  lists:flatten([io_lib:format("~2.16.0b", [N]) || N <- DenseHash]).
+
 knot(Input) ->
   Lengths = Input ++ ?ADDITIONAL_LENGTHS,
   SparseHash = sparse_hash(Lengths, initial_list(), 0, 0),
-  DenseHash = dense_hash(SparseHash, []),
-  lists:flatten([io_lib:format("~2.16.0b", [N]) || N <- DenseHash]).
+  convert_to_hex(dense_hash(SparseHash, [])).
 
 part1() ->
   Lengths = [list_to_integer(S) || S <- string:lexemes(puzzle_input(), [$,])],
