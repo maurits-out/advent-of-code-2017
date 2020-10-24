@@ -33,7 +33,7 @@ find_group([V | T], Group, Graph) ->
     true ->
       find_group(T, Group, Graph);
     false ->
-      find_group(lists:append(T, maps:get(V, Graph)), sets:add_element(V, Group), Graph)
+      find_group(T ++ maps:get(V, Graph), sets:add_element(V, Group), Graph)
   end.
 
 find_group(V, Graph) ->
@@ -41,8 +41,7 @@ find_group(V, Graph) ->
 
 count_groups([], Count, _) ->
   Count;
-count_groups(Vertices, Count, Graph) ->
-  V = lists:nth(1, Vertices),
+count_groups([V | _] = Vertices, Count, Graph) ->
   Group = find_group(V, Graph),
   Remaining = [W || W <- Vertices, not sets:is_element(W, Group)],
   count_groups(Remaining, Count + 1, Graph).
