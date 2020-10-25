@@ -11,7 +11,7 @@ parse_line(Line) ->
   {list_to_integer(DepthString), list_to_integer(RangeString)}.
 
 read_firewall() ->
-  maps:from_list([parse_line(L) || L <- read_lines_from_input()]).
+  [parse_line(L) || L <- read_lines_from_input()].
 
 normalize_time(Time, Range) ->
   Time rem (2 * (Range - 1)).
@@ -29,10 +29,10 @@ layer_severity(Delay, Depth, Range) ->
   end.
 
 total_severity(Firewall) ->
-  lists:sum([layer_severity(0, Depth, Range) || {Depth, Range} <- maps:to_list(Firewall)]).
+  lists:sum([layer_severity(0, Depth, Range) || {Depth, Range} <- Firewall]).
 
 caught(Delay, Firewall) ->
-  Positions = [scanner_position(Delay + Depth, Range) || {Depth, Range} <- maps:to_list(Firewall)],
+  Positions = [scanner_position(Delay + Depth, Range) || {Depth, Range} <- Firewall],
   lists:any(fun(P) -> P == 0 end, Positions).
 
 smallest_delay(Delay, Firewall) ->
