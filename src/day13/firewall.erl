@@ -28,8 +28,8 @@ layer_severity(Delay, Depth, Range) ->
     _ -> 0
   end.
 
-total_severity(Delay, Firewall) ->
-  lists:sum([layer_severity(Delay, Depth, Range) || {Depth, Range} <- maps:to_list(Firewall)]).
+total_severity(Firewall) ->
+  lists:sum([layer_severity(0, Depth, Range) || {Depth, Range} <- maps:to_list(Firewall)]).
 
 caught(Delay, Firewall) ->
   Positions = [scanner_position(Delay + Depth, Range) || {Depth, Range} <- maps:to_list(Firewall)],
@@ -41,6 +41,6 @@ smallest_delay(Delay, Firewall) ->
     true -> smallest_delay(Delay + 1, Firewall)
   end.
 
-part1() -> total_severity(0, read_firewall()).
+part1() -> total_severity(read_firewall()).
 
 part2() -> smallest_delay(0, read_firewall()).
