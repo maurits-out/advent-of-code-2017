@@ -22,18 +22,17 @@ scanner_position(Time, Range) ->
     T -> 2 * (Range - 1) - T
   end.
 
-layer_severity(Delay, Depth, Range) ->
-  case scanner_position(Delay + Depth, Range) of
+layer_severity(Depth, Range) ->
+  case scanner_position(Depth, Range) of
     0 -> Depth * Range;
     _ -> 0
   end.
 
 total_severity(Firewall) ->
-  lists:sum([layer_severity(0, Depth, Range) || {Depth, Range} <- Firewall]).
+  lists:sum([layer_severity(Depth, Range) || {Depth, Range} <- Firewall]).
 
 caught(Delay, Firewall) ->
-  Positions = [scanner_position(Delay + Depth, Range) || {Depth, Range} <- Firewall],
-  lists:any(fun(P) -> P == 0 end, Positions).
+  lists:any(fun({Depth, Range}) -> scanner_position(Delay + Depth, Range) == 0 end, Firewall).
 
 smallest_delay(Delay, Firewall) ->
   case caught(Delay, Firewall) of
