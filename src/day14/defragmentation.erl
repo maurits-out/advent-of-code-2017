@@ -23,15 +23,9 @@ create_bit_mapping() ->
     $f => "1111"
   }.
 
-hash_input(Sequence) ->
-  ?PUZZLE_INPUT ++ "-" ++ integer_to_list(Sequence).
-
-hash(HashInput) ->
-  knot_hash:knot(HashInput).
-
 create_row(Sequence, BitMapping) ->
-  HashInput = hash_input(Sequence),
-  Hash = hash(HashInput),
+  HashInput = ?PUZZLE_INPUT ++ "-" ++ integer_to_list(Sequence),
+  Hash = knot_hash:knot(HashInput),
   lists:flatten([maps:get(Char, BitMapping) || Char <- Hash]).
 
 create_grid() ->
