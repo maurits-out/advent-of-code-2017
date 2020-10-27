@@ -33,8 +33,8 @@ grid_to_coordinates([Row | Rest], RowNumber, Acc) ->
   NewAcc = grid_row_to_coordinates(Row, RowNumber, 0, []) ++ Acc,
   grid_to_coordinates(Rest, RowNumber + 1, NewAcc).
 
-adjacent_new_used_squares({Row, Column}, UsedSquares, Visited) ->
-  Adjacent = [{Row - 1, Column}, {Row, Column + 1}, {Row + 1, Column}, {Row, Column - 1}],
+adjacent_new_used_squares({RowNum, ColNum}, UsedSquares, Visited) ->
+  Adjacent = [{RowNum - 1, ColNum}, {RowNum, ColNum + 1}, {RowNum + 1, ColNum}, {RowNum, ColNum - 1}],
   [Square || Square <- Adjacent, sets:is_element(Square, UsedSquares), not sets:is_element(Square, Visited)].
 
 find_used_squares_in_region([], _, Visited) ->
