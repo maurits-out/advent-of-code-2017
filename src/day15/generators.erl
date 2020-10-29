@@ -15,11 +15,11 @@ create_generator(Factor) ->
 
 create_generator(Factor, MultipleOf) ->
   GeneratorPart1 = create_generator(Factor),
-  fun Generator(Value) ->
+  fun GeneratorPart2(Value) ->
     NextValue = GeneratorPart1(Value),
     case NextValue rem MultipleOf of
       0 -> NextValue;
-      _ -> Generator(NextValue)
+      _ -> GeneratorPart2(NextValue)
     end
   end.
 
