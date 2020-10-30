@@ -7,9 +7,6 @@ part1() ->
 part2() ->
   count_matching_pairs(create_generator(16807, 4), create_generator(48271, 8), 5000000).
 
-puzzle_input() ->
-  {634, 301}.
-
 create_generator(Factor) ->
   fun(Value) -> (Value * Factor) rem 2147483647 end.
 
@@ -30,8 +27,7 @@ match(A, B) ->
   end.
 
 count_matching_pairs(GeneratorA, GeneratorB, Iterations) ->
-  {StartA, StartB} = puzzle_input(),
-  count_matching_pairs(StartA, StartB, GeneratorA, GeneratorB, Iterations, 0).
+  count_matching_pairs(634, 301, GeneratorA, GeneratorB, Iterations, 0).
 
 count_matching_pairs(_, _, _, _, 0, Acc) ->
   Acc;
