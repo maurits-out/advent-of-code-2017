@@ -1,13 +1,12 @@
 -module(permutation).
 -export([part1/0, part2/0]).
+-define(INITIAL_POSITIONS, "abcdefghijklmnop").
+-define(NUM_DANCES, 1000000000).
 
 read_moves() ->
   {ok, File} = file:read_file("input.txt"),
   Content = string:trim(unicode:characters_to_list(File)),
   string:lexemes(Content, ",").
-
-initial_positions() ->
-  "abcdefghijklmnop".
 
 spin(X, Positions) ->
   {List1, List2} = lists:split(length(Positions) - X, Positions),
@@ -45,9 +44,22 @@ move([$p | AB], Positions) ->
 dance(CurrentPositions, Moves) ->
   lists:foldl(fun(Move, Positions) -> move(Move, Positions) end, CurrentPositions, Moves).
 
+move_forward(Iteration) ->
+  ?NUM_DANCES - (?NUM_DANCES rem (Iteration + 1)).
+
+dance_as_a_whole(Positions, _, ?NUM_DANCES) ->
+  Positions;
+dance_as_a_whole(Positions, Moves, Iteration) ->
+  NextPositions = dance(Positions, Moves),
+  case NextPositions of
+    ?INITIAL_POSITIONS ->
+      dance_as_a_whole(NextPositions, Moves, move_forward(Iteration));
+    _ ->
+      dance_as_a_whole(NextPositions, Moves, Iteration + 1)
+  end.
+
 part1() ->
-  dance(initial_positions(), read_moves()).
+  dance(?INITIAL_POSITIONS, read_moves()).
 
 part2() ->
-  Moves = read_moves(),
-  lists:foldl(fun(_, Positions) -> dance(Positions, Moves) end, initial_positions(), lists:seq(1, 1000000000)).
+  dance_as_a_whole(?INITIAL_POSITIONS, read_moves(), 0).
