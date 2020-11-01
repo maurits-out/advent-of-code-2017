@@ -17,14 +17,12 @@ register_value(Expression, Registers) ->
 
 update_register(Expression, Value, Registers) ->
   Register = lists:nth(1, Expression),
-  maps:put(Register, Value, Registers).
+  Registers#{Register => Value}.
 
 evaluate(Expression, Registers) ->
   case string:to_integer(Expression) of
-    {error, _} ->
-      register_value(Expression, Registers);
-    {Value, _} ->
-      Value
+    {error, _} -> register_value(Expression, Registers);
+    {Value, _} -> Value
   end.
 
 execute(Instructions, PC, Registers, LastPlayed) ->
@@ -58,4 +56,4 @@ execute(Instructions, PC, Registers, LastPlayed) ->
 
 part1() ->
   Instructions = read_instructions(),
-  execute(Instructions, 0, maps:new(), none).
+  execute(Instructions, 0, #{}, none).
