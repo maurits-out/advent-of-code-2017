@@ -1,6 +1,6 @@
 -module(duet_part2).
 -export([run/0]).
--import(duet_part1, [read_instructions/0, value_of_register/2, update_register/3, evaluate/2]).
+-import(duet_common, [read_instructions/0, value_of_register/2, update_register/3, evaluate/2]).
 -record(state, {id, pc = 0, registers, partner_pid, num_values_sent = 0}).
 
 execute(Instructions, #state{pc = PC, registers = Registers} = State) ->
