@@ -1,5 +1,5 @@
 -module(duet_part1).
--export([part1/0]).
+-export([run/0, read_instructions/0, value_of_register/2, update_register/3, evaluate/2]).
 
 read_instructions() ->
   {ok, Bin} = file:read_file("input.txt"),
@@ -11,7 +11,7 @@ parse_line(Line) ->
   [Instruction | Args] = string:lexemes(Line, " "),
   {list_to_atom(Instruction), Args}.
 
-register_value(Expression, Registers) ->
+value_of_register(Expression, Registers) ->
   Register = lists:nth(1, Expression),
   maps:get(Register, Registers, 0).
 
@@ -21,7 +21,7 @@ update_register(Expression, Value, Registers) ->
 
 evaluate(Expression, Registers) ->
   case string:to_integer(Expression) of
-    {error, _} -> register_value(Expression, Registers);
+    {error, _} -> value_of_register(Expression, Registers);
     {Value, _} -> Value
   end.
 
@@ -33,13 +33,13 @@ execute(Instructions, PC, Registers, LastPlayed) ->
       Value = evaluate(Y, Registers),
       execute(Instructions, PC + 1, update_register(X, Value, Registers), LastPlayed);
     {add, [X, Y]} ->
-      Value = register_value(X, Registers) + evaluate(Y, Registers),
+      Value = value_of_register(X, Registers) + evaluate(Y, Registers),
       execute(Instructions, PC + 1, update_register(X, Value, Registers), LastPlayed);
     {mul, [X, Y]} ->
-      Value = register_value(X, Registers) * evaluate(Y, Registers),
+      Value = value_of_register(X, Registers) * evaluate(Y, Registers),
       execute(Instructions, PC + 1, update_register(X, Value, Registers), LastPlayed);
     {mod, [X, Y]} ->
-      Value = register_value(X, Registers) rem evaluate(Y, Registers),
+      Value = value_of_register(X, Registers) rem evaluate(Y, Registers),
       execute(Instructions, PC + 1, update_register(X, Value, Registers), LastPlayed);
     {rcv, [X]} ->
       case evaluate(X, Registers) of
@@ -54,6 +54,6 @@ execute(Instructions, PC, Registers, LastPlayed) ->
       execute(Instructions, PC + Offset, Registers, LastPlayed)
   end.
 
-part1() ->
+run() ->
   Instructions = read_instructions(),
   execute(Instructions, 0, #{}, none).
