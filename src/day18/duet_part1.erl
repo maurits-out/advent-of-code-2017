@@ -1,4 +1,4 @@
--module(duet).
+-module(duet_part1).
 -export([part1/0]).
 
 read_instructions() ->
