@@ -1,5 +1,6 @@
 -module(tubes).
 -export([follow_path/0]).
+-define(SPACE, $\ ).
 
 to_array(Bin) ->
   array:from_list(binary_to_list(Bin)).
@@ -28,18 +29,18 @@ move({Row, Column}, Direction) ->
 
 new_heading({Row, Column}, CurrentDirection, Diagram) when (CurrentDirection == down) or (CurrentDirection == up) ->
   case character({Row, Column + 1}, Diagram) of
-    $\  -> left;
+    ?SPACE -> left;
     _ -> right
   end;
 new_heading({Row, Column}, _, Diagram) ->
   case character({Row + 1, Column}, Diagram) of
-    $\  -> up;
+    ?SPACE -> up;
     _ -> down
   end.
 
 follow_path(Location, Direction, Diagram, Acc, Steps) ->
   case character(Location, Diagram) of
-    $\  ->
+    ?SPACE ->
       {lists:reverse(Acc), Steps - 1};
     $+ ->
       NewDirection = new_heading(Location, Direction, Diagram),
