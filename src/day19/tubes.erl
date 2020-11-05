@@ -41,7 +41,7 @@ new_heading({Row, Column}, _, Diagram) ->
 follow_path(Location, Direction, Diagram, Letters, Steps) ->
   case character(Location, Diagram) of
     ?SPACE ->
-      {lists:reverse(Letters), Steps - 1};
+      {lists:reverse(Letters), Steps};
     $+ ->
       NewDirection = new_heading(Location, Direction, Diagram),
       follow_path(move(Location, NewDirection), NewDirection, Diagram, Letters, Steps + 1);
@@ -53,5 +53,5 @@ follow_path(Location, Direction, Diagram, Letters, Steps) ->
 
 follow_path() ->
   Diagram = read_diagram(),
-  {Letters, Steps} = follow_path({0, start_column(Diagram)}, down, Diagram, [], 1),
+  {Letters, Steps} = follow_path({0, start_column(Diagram)}, down, Diagram, [], 0),
   io:format("Part 1: ~p~nPart 2: ~p~n", [Letters, Steps]).
