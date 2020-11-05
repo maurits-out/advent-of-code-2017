@@ -16,7 +16,7 @@ character({Row, Column}, Diagram) ->
 
 start_column(Diagram) ->
   Row = array:get(0, Diagram),
-  [Column] = [C || C <- lists:seq(0, array:size(Row) - 1), array:get(C, Row) /= $\ ],
+  [Column] = [C || C <- lists:seq(0, array:size(Row) - 1), array:get(C, Row) /= ?SPACE],
   Column.
 
 move({Row, Column}, Direction) ->
