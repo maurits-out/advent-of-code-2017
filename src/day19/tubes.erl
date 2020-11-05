@@ -38,17 +38,17 @@ new_heading({Row, Column}, _, Diagram) ->
     _ -> down
   end.
 
-follow_path(Location, Direction, Diagram, Acc, Steps) ->
+follow_path(Location, Direction, Diagram, Letters, Steps) ->
   case character(Location, Diagram) of
     ?SPACE ->
-      {lists:reverse(Acc), Steps - 1};
+      {lists:reverse(Letters), Steps - 1};
     $+ ->
       NewDirection = new_heading(Location, Direction, Diagram),
-      follow_path(move(Location, NewDirection), NewDirection, Diagram, Acc, Steps + 1);
+      follow_path(move(Location, NewDirection), NewDirection, Diagram, Letters, Steps + 1);
     Char when Char >= $A andalso Char =< $Z ->
-      follow_path(move(Location, Direction), Direction, Diagram, [Char | Acc], Steps + 1);
+      follow_path(move(Location, Direction), Direction, Diagram, [Char | Letters], Steps + 1);
     _ ->
-      follow_path(move(Location, Direction), Direction, Diagram, Acc, Steps + 1)
+      follow_path(move(Location, Direction), Direction, Diagram, Letters, Steps + 1)
   end.
 
 follow_path() ->
