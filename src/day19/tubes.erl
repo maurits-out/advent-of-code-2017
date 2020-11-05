@@ -1,5 +1,5 @@
 -module(tubes).
--export([part1/0]).
+-export([follow_path/0]).
 
 to_array(Bin) ->
   array:from_list(binary_to_list(Bin)).
@@ -26,17 +26,31 @@ move({Row, Column}, Direction) ->
     right -> {Row, Column + 1}
   end.
 
-follow_path(Location, Direction, Diagram, Acc) ->
-  case character(Location, Diagram) of
-    $+ ->
-      Location;
-    _ ->
-      follow_path(move(Location, Direction), Direction, Diagram, Acc)
+new_heading({Row, Column}, CurrentDirection, Diagram) when (CurrentDirection == down) or (CurrentDirection == up) ->
+  case character({Row, Column + 1}, Diagram) of
+    $\  -> left;
+    _ -> right
+  end;
+new_heading({Row, Column}, _, Diagram) ->
+  case character({Row + 1, Column}, Diagram) of
+    $\  -> up;
+    _ -> down
   end.
 
-part1() ->
+follow_path(Location, Direction, Diagram, Acc, Steps) ->
+  case character(Location, Diagram) of
+    $\  ->
+      {lists:reverse(Acc), Steps - 1};
+    $+ ->
+      NewDirection = new_heading(Location, Direction, Diagram),
+      follow_path(move(Location, NewDirection), NewDirection, Diagram, Acc, Steps + 1);
+    Char when Char >= $A andalso Char =< $Z ->
+      follow_path(move(Location, Direction), Direction, Diagram, [Char | Acc], Steps + 1);
+    _ ->
+      follow_path(move(Location, Direction), Direction, Diagram, Acc, Steps + 1)
+  end.
+
+follow_path() ->
   Diagram = read_diagram(),
-  follow_path({0, start_column(Diagram)}, down, Diagram, []).
-
-
-
+  {Letters, Steps} = follow_path({0, start_column(Diagram)}, down, Diagram, [], 1),
+  io:format("Part 1: ~p~nPart 2: ~p~n", [Letters, Steps]).
