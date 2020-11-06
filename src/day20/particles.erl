@@ -25,9 +25,34 @@ parse_line(Line) ->
     acceleration = parse_vector(Acceleration)
   }.
 
-parse_lines(Lines) ->
-  [parse_line(L) || L <- Lines].
+parse_input() ->
+  [parse_line(L) || L <- read_lines()].
+
+add(#vector{x = X1, y = Y1, z = Z1}, #vector{x = X2, y = Y2, z = Z2}) ->
+  #vector{x = X1 + X2, y = Y1 + Y2, z = Z1 + Z2}.
+
+update_particle(#particle{position = Position, velocity = Velocity, acceleration = Acceleration} = Particle) ->
+  NewVelocity = add(Velocity, Acceleration),
+  NewPosition = add(Position, NewVelocity),
+  Particle#particle{position = NewPosition, velocity = NewVelocity}.
+
+update_particles(Particles) ->
+  [update_particle(P) || P <- Particles].
+
+iterate(Particles, Iterations) ->
+  lists:foldl(fun(_, P) -> update_particles(P) end, Particles, lists:seq(1, Iterations)).
+
+distance_to_origin(#particle{position = Position}) ->
+  #vector{x = X, y = Y, z = Z} = Position,
+  abs(X) + abs(Y) + abs(Z).
+
+find_particle_closest_to_origin(Particles) ->
+  ParticlesWithID = lists:zip(lists:seq(0, length(Particles) - 1), Particles),
+  Sorted = lists:sort(fun({_, P1}, {_, P2}) -> distance_to_origin(P1) =< distance_to_origin(P2) end, ParticlesWithID),
+  {ID, _} = lists:nth(1, Sorted),
+  ID.
 
 part1() ->
-  Lines = read_lines(),
-  io:format("~p~n", [parse_lines(Lines)]).
+  Particles = parse_input(),
+  ID = find_particle_closest_to_origin(iterate(Particles, 1000)),
+  io:format("Particle closest to origin (part 1): ~p~n", [ID]).
