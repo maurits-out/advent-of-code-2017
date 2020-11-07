@@ -39,10 +39,10 @@ update_particle(#particle{position = Position, velocity = Velocity, acceleration
 
 group_by_position([], Groups) ->
   Groups;
-group_by_position([Particle | T], Groups) ->
+group_by_position([Particle | Remaining], Groups) ->
   #particle{position = Position} = Particle,
   Values = maps:get(Position, Groups, []),
-  group_by_position(T, maps:put(Position, [Particle | Values], Groups)).
+  group_by_position(Remaining, maps:put(Position, [Particle | Values], Groups)).
 
 remove_collided_particles(Particles) ->
   Grouped = group_by_position(Particles, maps:new()),
