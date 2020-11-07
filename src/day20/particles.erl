@@ -42,17 +42,17 @@ update_particles(Particles) ->
 iterate(Particles, Iterations) ->
   lists:foldl(fun(_, P) -> update_particles(P) end, Particles, lists:seq(1, Iterations)).
 
-distance_to_origin(#particle{position = Position}) ->
-  #vector{x = X, y = Y, z = Z} = Position,
-  abs(X) + abs(Y) + abs(Z).
+compare_distance(#vector{x = X1, y = Y1, z = Z1}, #vector{x = X2, y = Y2, z = Z2}) ->
+  abs(X1) =< abs(X2) andalso abs(Y1) =< abs(Y2) andalso abs(Z1) =< abs(Z2).
 
-find_particle_closest_to_origin(Particles) ->
-  ParticlesWithID = lists:zip(lists:seq(0, length(Particles) - 1), Particles),
-  Sorted = lists:sort(fun({_, P1}, {_, P2}) -> distance_to_origin(P1) =< distance_to_origin(P2) end, ParticlesWithID),
+find_particle_with_smallest_acceleration(Particles) ->
+  Accelerations = [Acc || #particle{acceleration = Acc} <- Particles],
+  AccelerationsWithId = lists:zip(lists:seq(0, length(Accelerations) - 1), Accelerations),
+  Sorted = lists:sort(fun({_, Acc1}, {_, Acc2}) -> compare_distance(Acc1, Acc2) end, AccelerationsWithId),
   {ID, _} = lists:nth(1, Sorted),
   ID.
 
 part1() ->
   Particles = parse_input(),
-  ID = find_particle_closest_to_origin(iterate(Particles, 1000)),
+  ID = find_particle_with_smallest_acceleration(Particles),
   io:format("Particle closest to origin (part 1): ~p~n", [ID]).
