@@ -1,5 +1,5 @@
 -module(bridge).
--export([part1/0]).
+-export([part1/0, part2/0]).
 
 read_input() ->
   {ok, Bin} = file:read_file("src/day24/input.txt"),
@@ -27,14 +27,39 @@ strength_of_strongest_bridge(CurrentPin, Remaining, Bridge) ->
     [] ->
       strength(Bridge);
     Matching ->
-      lists:max([extend_bridge(CurrentPin, C, Remaining, Bridge) || C <- Matching])
+      lists:max([extend_strongest_bridge(CurrentPin, C, Remaining, Bridge) || C <- Matching])
   end.
 
-extend_bridge(CurrentPin, NewComponent, Remaining, Bridge) ->
+extend_strongest_bridge(CurrentPin, NewComponent, Remaining, Bridge) ->
   NextPin = next_pin(CurrentPin, NewComponent),
   NewRemaining = sets:del_element(NewComponent, Remaining),
   strength_of_strongest_bridge(NextPin, NewRemaining, [NewComponent | Bridge]).
 
+compare(Bridge1, Bridge2) ->
+  length(Bridge1) > length(Bridge2) orelse
+    (length(Bridge1) == length(Bridge2) andalso strength(Bridge1) >= strength(Bridge2)).
+
+select_longest(Bridges) ->
+  Sorted = lists:sort(fun compare/2, Bridges),
+  lists:nth(1, Sorted).
+
+longest_bridge(CurrentPin, Remaining, Bridge) ->
+  case find_matching_components(CurrentPin, Remaining) of
+    [] ->
+      Bridge;
+    Matching ->
+      select_longest([extend_longest_bridge(CurrentPin, C, Remaining, Bridge) || C <- Matching])
+  end.
+
+extend_longest_bridge(CurrentPin, NewComponent, Remaining, Bridge) ->
+  NextPin = next_pin(CurrentPin, NewComponent),
+  NewRemaining = sets:del_element(NewComponent, Remaining),
+  longest_bridge(NextPin, NewRemaining, [NewComponent | Bridge]).
+
 part1() ->
   Strength = strength_of_strongest_bridge(0, read_components(), []),
   io:format("Strength of the strongest bridge: ~p~n", [Strength]).
+
+part2() ->
+  Strength = strength(longest_bridge(0, read_components(), [])),
+  io:format("Strength of the longest bridge: ~p~n", [Strength]).
