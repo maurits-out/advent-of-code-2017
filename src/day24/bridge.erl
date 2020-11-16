@@ -22,19 +22,19 @@ find_matching_components(Pin, Components) ->
 next_pin(CurrentPin, {CurrentPin, OtherPin}) -> OtherPin;
 next_pin(CurrentPin, {OtherPin, CurrentPin}) -> OtherPin.
 
-strength_of_strongest_bridge(CurrentPin, Remaining, Bridge, CurrentMax) ->
+strength_of_strongest_bridge(CurrentPin, Remaining, Bridge) ->
   case find_matching_components(CurrentPin, Remaining) of
     [] ->
-      max(CurrentMax, strength(Bridge));
+      strength(Bridge);
     Matching ->
-      lists:max([extend_bridge(CurrentPin, C, Remaining, Bridge, CurrentMax) || C <- Matching])
+      lists:max([extend_bridge(CurrentPin, C, Remaining, Bridge) || C <- Matching])
   end.
 
-extend_bridge(CurrentPin, NewComponent, Remaining, Bridge, CurrentMax) ->
+extend_bridge(CurrentPin, NewComponent, Remaining, Bridge) ->
   NextPin = next_pin(CurrentPin, NewComponent),
   NewRemaining = sets:del_element(NewComponent, Remaining),
-  strength_of_strongest_bridge(NextPin, NewRemaining, [NewComponent | Bridge], CurrentMax).
+  strength_of_strongest_bridge(NextPin, NewRemaining, [NewComponent | Bridge]).
 
 part1() ->
-  Strength = strength_of_strongest_bridge(0, read_components(), [], 0),
+  Strength = strength_of_strongest_bridge(0, read_components(), []),
   io:format("Strength of the strongest bridge: ~p~n", [Strength]).
