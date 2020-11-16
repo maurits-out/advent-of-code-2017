@@ -1,5 +1,5 @@
 -module(coprocessor).
--export([part1/0]).
+-export([part1/0, part2/0]).
 
 read_instructions() ->
   {ok, Bin} = file:read_file("src/day23/input.txt"),
@@ -46,8 +46,16 @@ execute(Instructions, PC, Registers, MulCount) ->
       MulCount
   end.
 
+is_non_prime(N) ->
+  length([M || M <- lists:seq(2, trunc(math:sqrt(N))), N rem M == 0]) > 0.
+
+count_non_prime(Start) ->
+  length([M || M <- lists:seq(Start, Start + 17000, 17), is_non_prime(M)]).
+
 part1() ->
   Instructions = read_instructions(),
   MulCount = execute(Instructions, 0, #{}, 0),
   io:format("The mul instruction is invoked ~p times.~n", [MulCount]).
 
+part2() ->
+  io:format("Number of non-prime numbers found: ~p.~n", [count_non_prime(79 * 100 + 100000)]).
